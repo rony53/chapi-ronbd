@@ -1,0 +1,77 @@
+|LF_STANDARD|
+|?TREE=&raquo; <a class=tree href="/">`LANG_HOME`</a> &raquo; <a class=tree href="/CMD_TICKET_MANAGE">`LANG_MANAGE_TICKETS`</a>|
+|?HELP_SECTION=`RESELLER_HELPER`/messagesystem.html|
+|HTM_HEADER|
+<div id="leftPanel">
+<div class="panelBox"><div class="title"><span>|LANG_OPTIONS|</span></div>
+<a href="/CMD_TICKET_CREATE?type=message"><img src="/IMG_IC_EMAIL_FOR"><br>|LANG_SEND_MESS|</a>
+<a href="/CMD_TICKET_MANAGE?action=closed"><img src="/IMG_IC_VIEW_TICKLET"><br>|LANG_VIEW_CLOSED||NEWCLOSED|</a>
+<div class="cf cleft"></div></div>
+      <div class="panelBox">
+        <div class="title search"><span>|LANG_TICK_OPTIONS|</span></div>
+        <div style="margin-bottom: 10px;" align="center">
+          <form id="formus" name="formus" method="get" action="/CMD_TICKET_MANAGE">
+            <input type="hidden" name="comparison2" value="contains" />
+            <input type="text" name="value2" id="searchval2" value="|LANG_SEARCH_TICKET_BY_SUBJECT|..." class="input" /><img src="IMG_GO_SEARCH" title="|LANG_SEARCH|" id="searchByUser">
+          </form>
+        </div>
+        <div style="margin-bottom: 5px;" align="center">
+          <form id="formds" name="formds" method="get" action="/CMD_TICKET_MANAGE">
+            <input type="hidden" name="comparison3" value="contains" />
+            <input type="text" name="value3" id="searchval3" value="|LANG_SEARCH_TICKET_BY_USER|..." class="input domss" /><img src="IMG_GO_SEARCH" title="|LANG_SEARCH|" id="searchByDomain">
+          </form>
+        </div>
+      </div>
+
+|HTM_BOX_RESELLER_STATS|
+    </div>
+    <div id="rightPanel">
+|HTM_CONFIG|
+|$|SK_PHP|
+<?php  
+include |SK_ROOT| . "inc/functions.php";
+
+$pagetit = <<<EOF
+|LANG_MANAGE_TICKETS|
+EOF;
+$tree = <<<EOF
+|TREE|
+EOF;
+
+$tpl->pagetit($pagetit, $tree);
+
+?>
+
+<div class="table100" style="margin: 12px 0;">
+<?php
+
+$table = <<<EOF
+|TICKETS|
+EOF;
+preg_match_all("/<tr ><td align=right colspan=[1-9]+>Page: (.*)<\/td ><\/tr >/", $table, $matches);
+echo str_replace('class=toptext', 'class=pagerText', $matches[1][0]);
+
+?>
+DONE|
+|TICKETS|
+</div>
+
+<table class=config cellspacing=0>
+  <thead>
+  <tr><td colspan=3>|LANG_TICK_OPTIONS|</td></tr>
+  </thead>
+  <tbody>
+  <form action="CMD_TICKET_MANAGE" method="post">
+    <input type=hidden name=action value="active">
+    <tr><td><input type=checkbox name=active value="yes" |ACTIVECHECKED|></td><td class=list>|LANG_TICK_ENABLED| <input type=text size=30 name=html value="|HTML|"></td>
+    <td><input class="boton" type=submit name=save value="|LANG_SAVE|"></td></tr>
+  </form>
+  
+  <form action="CMD_TICKET_MANAGE" method="post">
+    <input type=hidden name=action value="email">
+    <tr><td><input type=checkbox name=ON value="yes" |EMAILCHECKED|></td><td class=list>|LANG_EMAIL_TO| <input type=text name=email value="|EMAIL|"></td>
+    <td><input class="boton" type=submit name=save value="|LANG_SAVE|"></td></tr>
+  </form>
+  </tbody>
+</table>
+|HTM_RESELLER_BOTTOM|

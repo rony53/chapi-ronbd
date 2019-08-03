@@ -1,0 +1,17 @@
+|HTM_CONFIG|
+|$|SK_PHP|
+<?php
+include |SK_ROOT|."inc/functions.php";
+include |SK_ROOT|."inc/json.php";
+
+parse_str($_SERVER["QUERY_STRING"], $_GET);
+$username = $_SERVER['USERNAME'];
+
+if($_GET['addShotcut']) {
+	list($name, $link) = explode('||', base64_decode($_GET['addShotcut'])); 
+	$result = $sk->addShotcut($name, $link, $username);
+	echo $output = _json_encode($result);
+}
+
+?>
+DONE|

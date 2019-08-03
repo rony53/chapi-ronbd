@@ -1,0 +1,28 @@
+|HTM_CONFIG|
+|$|SK_PHP|
+<?php include |SK_ROOT|.'inc/functions.php';function getLimit($val) { if(intval($val) == 0) return ''; else return ' / '.$val; }
+function makeUsage($max, $used) { if($max>0) { $per = round(($used * 100) / $max); if($per>100) $per=100;
+$per = number_format($per,0);$bar = round( ($per * 130) / 100);if($bar>130) $bar=130;
+return '<br><div class="usagebar"><div class="per">'.$per.'%</div><div class="out" align="left"><div class="in bbar" ancho="'.$bar.
+'" style="width:1px"></div></div></div>';}return '';}$hd = (float)number_format((float)'|USERQUOTA|',1,'.','');
+$hdmax = (float)number_format((float)'|USERQUOTAMAX|',1,'.','');$hdunit = 'MB';if($hdmax>1024){
+$hd = (float)number_format($hd/1024,1,'.','');$hdmax = (float)number_format($hdmax/1024,1,'.','');$hdunit = 'GB';}
+$bwunit = 'MB';$bw = (float)number_format((float)'|USERBANDWIDTH|',1,'.','');
+$bwmax = (float) number_format((float)'|USERBANDWIDTHMAX|',1,'.','');if($bwmax>1024) {
+$bw = (float)number_format((float)'|USERBANDWIDTHGIG|',1,'.','');
+$bwmax = (float)number_format((float)'|USERBANDWIDTHMAXGIG|',1,'.','');$bwunit = 'GB';}?>
+<div class="panelBox"><div class="title"><span>|LANG_ACCOUNT_SUMMARY|</span></div><ul>
+<li><span>|LANG_DISK_SPACE|</span><?php echo $hd.getLimit($hdmax).$hdunit.makeUsage($hdmax, $hd); ?></li>
+<li><span>|LANG_BANDWIDTH|</span><?php echo $bw.getLimit($bwmax).$bwunit.makeUsage($bwmax, $bw); ?></li>
+<li><span>|LANG_DOMAINS|</span>|NDOMAINS|<?php getLimit("|NDOMAINSMAX|"); ?></li>
+<li><span>|LANG_DATABASES|</span>|USERDATABASE|<?php getLimit("|USERDATABASEMAX|"); ?></li>
+<li><span>|LANG_FTP_ACCOUNTS|</span>|USERFTP|<?php getLimit("|USERFTPMAX|"); ?></li>
+<li><span>|LANG_EMAILS|</span>|USEREMAIL|<?php getLimit("|USEREMAILMAX|"); ?></li>
+<li><span>|LANG_SUBDOMAINS|</span>|NUSERSUBDOMAINS|<?php getLimit("|NUSERSUBDOMAINSMAX|"); ?></li>
+<li><span>|LANG_POINTERS|</span>|USERPOINTERS|<?php getLimit("|USERPOINTERSMAX|"); ?></li></ul></div>
+DONE|
+<script language="JavaScript" type="text/javascript">
+<!--
+$(function(){$("body").find(".bbar").each(function(){$(this).animate({width:$(this).attr("ancho")+"px"},2000).animate({opacity:"toggle"},200).animate({opacity:"toggle"},200).animate({opacity:"toggle"},200).animate({opacity:"toggle"},200);});});
+//-->
+</script>

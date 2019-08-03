@@ -1,0 +1,62 @@
+|LF_STANDARD|
+|LF_CREATE|
+|HTM_CONFIG|
+<script language="javascript">
+<!--
+function showUserMessage(){
+	var message = window.open("CMD_EDIT_USER_MESSAGE","message","width=740,height=520,scrollbars=no,resizable=yes");
+}
+// -->
+</script>
+    <div id="leftPanel">
+|HTM_BOX_RESELLER_SEARCH|
+|HTM_BOX_RESELLER_STATS|
+    </div>
+|$|SK_PHP|
+<?php 
+include |SK_ROOT|."inc/functions.php";
+
+?>
+    <div id="rightPanel">
+      <div style="float:left;width:350px;margin-right: 40px;">
+<?php
+$items[] = array('img' => '/IMG_IC_LIST_USERS', 'link' => '/CMD_USER_SHOW', 'txt' => '|LANG_LIST_USERS|');
+$items[] = array('img' => '/IMG_IC_ADD_USER', 'link' => '/HTM_ACCOUNT_USER_CREATE', 'txt' => '|LANG_ADD_NEW_USER|');
+$items[] = array('img' => '/IMG_IC_ADDPACKAGE', 'link' => '/CMD_SHOW_USER_PACKAGE', 'txt' => '|LANG_ADD_PACKAGE|');
+$items[] = array('img' => '/IMG_IC_PACKAGE', 'link' => '/CMD_MANAGE_USER_PACKAGES', 'txt' => '|LANG_LIST_PACKAGES|');
+$items[] = array('img' => '/IMG_IC_PACKAGE', 'link' => 'javascript:showUserMessage();', 'txt' => "|LANG_EDIT_USER_MESS|");
+$items[] = array('img' => '/IMG_IC_USER_PASS', 'link' => '/HTM_USER_PASSWD', 'txt' => '|LANG_CHANGE_PASSWORDS|');
+$sk->iconmenu('|LANG_USERS_ADMINISTRATION|',$items);
+unset($items);
+
+$items[] = array('img' => '/IMG_IC_STATS', 'link' => '/CMD_RESELLER_STATS', 'txt' => '|LANG_RESELLER_STATS|');
+$items[] = array('img' => '/IMG_IC_IP', 'link' => '/CMD_IP_CONFIG', 'txt' => '|LANG_IP_MANAGER|');
+$items[] = array('img' => '/IMG_IC_SKINS', 'link' => '/CMD_SKINS', 'txt' => '|LANG_SKIN_MANAGER|');
+$items[] = array('img' => '/IMG_IC_BACKUP', 'link' => '/CMD_USER_BACKUP', 'txt' => '|LANG_USER_BACKUPS|');
+$sk->iconmenu('|LANG_TIT_RESELLER|',$items);
+unset($items);
+?>
+
+      </div>
+      <div style="float:left;width:350px">
+<?php
+$items[] = array('img' => '/IMG_IC_TICKETS', 'link' => '/CMD_TICKET_MANAGE', 'txt' => '|LANG_MANAGE_TICKETS|<br>(|NEWTICKETS| |LANG_NEW|)');
+$items[] = array('img' => '/IMG_IC_MESSAGEUSERS', 'link' => '/CMD_TICKET_CREATE?type=message&who=all', 'txt' => '|LANG_MESSSAGE_ALL_USERS|');
+$items[] = array('img' => '/IMG_IC_CONTACTADMIN', 'link' => '/CMD_TICKET_CREATE?type=ticket', 'txt' => '|LANG_CONTACT_ADMIN|');
+|*if USERSYSINFO="ON"|
+$items[] = array('img' => '/IMG_IC_SERVINFO', 'link' => '/CMD_SYSTEM_INFO', 'txt' => '|LANG_SYSTEM_INFO|');
+|*endif|
+$items[] = array('img' => '/IMG_IC_DOMAIN_SETUP', 'link' => '/CMD_NAME_SERVER', 'txt' => '|LANG_NAMESERVERS|');
+$data = '|PLUGIN_0_RESELLER_TXT|'; if(strlen($data)>1) $items[] = array('plugin' => $data);
+$data = '|PLUGIN_1_RESELLER_TXT|'; if(strlen($data)>1) $items[] = array('plugin' => $data);
+$data = '|PLUGIN_2_RESELLER_TXT|'; if(strlen($data)>1) $items[] = array('plugin' => $data);
+$data = '|PLUGIN_3_RESELLER_TXT|'; if(strlen($data)>1) $items[] = array('plugin' => $data);
+$data = '|PLUGIN_4_RESELLER_TXT|'; if(strlen($data)>1) $items[] = array('plugin' => $data);
+$data = '|PLUGIN_5_RESELLER_TXT|'; if(strlen($data)>1) $items[] = array('plugin' => $data);
+$data = '|PLUGIN_6_RESELLER_TXT|'; if(strlen($data)>1) $items[] = array('plugin' => $data);
+$sk->iconmenu('|LANG_TIT_EXTRA|',$items);
+unset($items);
+?>
+      </div>
+    </div>
+DONE|

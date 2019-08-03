@@ -1,0 +1,16 @@
+|?HELP_SECTION=`USER_HELPER`/|
+|?TREE=&raquo; <a class=tree href="/">`LANG_HOME`</a> &raquo; <a class=tree href="/CMD_PLUGINS">`PLUGIN_NAME`</a>|
+|HTM_USER_TOP|
+|HTM_CONFIG|
+|$|SK_PHP|
+<?php
+include |SK_ROOT| . "inc/functions.php";
+$pagetit = getPluginDetails();
+$tree = '&raquo; <a class=tree href="/">|LANG_HOME|</a> &raquo; <a class=tree href="'.$_SERVER['REQUEST_URI'].'">'.$pagetit['name'].'</a>';
+
+$tpl->pagetit($pagetit['name'], $tree);
+
+?>
+DONE|
+|OUTPUT|
+|HTM_USER_BOTTOM|

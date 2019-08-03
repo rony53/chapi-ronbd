@@ -1,0 +1,29 @@
+|HTM_CONFIG|
+|$|SK_PHP|
+<?php include |SK_ROOT|.'inc/functions.php';function getLimit($val) { if(intval($val) == 0) return ''; else return ' / '.$val; }
+function makeUsage($max, $used) { if($max>0) { $per = round(($used * 100) / $max); if($per>100) $per=100;
+$per = number_format($per,0);$bar = round( ($per * 130) / 100);if($bar>130) $bar=130;
+return '<br><div class="usagebar"><div class="per">'.$per.'%</div><div class="out" align="left"><div class="in bbar" ancho="'.$bar.
+'" style="width:1px"></div></div></div>';}return '';}$hd = (float)number_format((float)'|RESELLERQUOTA|',1,'.','');
+$hdmax = (float)number_format((float)'|RESELLERQUOTAMAX|',1,'.','');$hdunit = 'MB';if($hdmax>1024){
+$hd = (float)number_format($hd/1024,1,'.','');$hdmax = (float)number_format($hdmax/1024,1,'.','');$hdunit = 'GB';}
+$bwunit = 'MB';$bw = (float)number_format((float)'|RESELLERBANDWIDTH|',1,'.','');
+$bwmax = (float) number_format((float)'|RESELLERBANDWIDTHMAX|',1,'.','');if($bwmax>1024) {
+$bw = (float)number_format((float)'|RESELLERBANDWIDTHGIG|',1,'.','');
+$bwmax = (float)number_format((float)'|RESELLERBANDWIDTHMAXGIG|',1,'.','');$bwunit = 'GB';}?>
+<div class="panelBox"><div class="title"><span>|LANG_ACCOUNT_SUMMARY|</span></div><ul>
+<li><span>|LANG_DISK_SPACE|</span><?php echo $hd.getLimit($hdmax).$hdunit.makeUsage($hdmax, $hd); ?></li>
+<li><span>|LANG_BANDWIDTH|</span><?php echo $bw.getLimit($bwmax).$bwunit.makeUsage($bwmax, $bw); ?></li>
+<li><span>|LANG_DOMAINS|</span>|RESELLERDOMAINS|<?php getLimit("|RESELLERDOMAINSMAX|"); ?></li>
+<li><span>|LANG_USERS|</span>|RESELLERUSERS|</li>
+<li><span>|LANG_DATABASES|</span>|RESELLERDATABASE|<?php getLimit("|RESELLERDATABASEMAX|"); ?></li>
+<li><span>|LANG_FTP_ACCOUNTS|</span>|RESELLERFTP|<?php getLimit("|RESELLERFTPMAX|"); ?></li>
+<li><span>|LANG_EMAILS|</span>|RESELLEREMAIL|<?php getLimit("|RESELLEREMAILMAX|"); ?></li>
+<li><span>|LANG_SUBDOMAINS|</span>|RESELLERSUBDOMAINS|<?php getLimit("|RESELLERSUBDOMAINSMAX|"); ?></li>
+<li><span>|LANG_POINTERS|</span>|RESELLERPOINTERS|<?php getLimit("|RESELLERPOINTERSMAX|"); ?></li></ul></div>
+DONE|
+<script language="JavaScript" type="text/javascript">
+<!--
+$(function(){$("body").find(".bbar").each(function(){$(this).animate({width:$(this).attr("ancho")+"px"},2000).animate({opacity:"toggle"},200).animate({opacity:"toggle"},200).animate({opacity:"toggle"},200).animate({opacity:"toggle"},200);});});
+//-->
+</script>

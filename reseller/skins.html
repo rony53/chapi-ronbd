@@ -1,0 +1,234 @@
+|LF_STANDARD|
+|?TREE=&raquo; <a class=tree href="/">`LANG_HOME`</a> &raquo; <a class=tree href="/CMD_SKINS">`LANG_MANAGE_SKINS`</a>|
+|?HELP_SECTION=`RESELLER_HELPER`/skins.html|
+|HTM_CONFIG|
+|HTM_VERSION|
+|HTM_RESELLER_TOP|
+|$|SK_PHP|
+<?php  
+$pagetit = <<<EOF
+|LANG_MANAGE_SKINS|
+EOF;
+$tree = <<<EOF
+|TREE|
+EOF;
+
+include |SK_ROOT| . "inc/functions.php";
+$tpl->pagetit($pagetit, $tree);
+
+$arrPath = getpath();
+$ownerType=$arrPath['owner'];
+$path=$arrPath['path'];
+
+if($ownerType=="admin" && "|USERCREATOR|"=="root") $show_options = true;
+if($ownerType=='reseller' && file_exists('/home/|USERNAME|/skins/|SKIN|') && '/home/|USERNAME|/skins/|SKIN|/'==|SK_ROOT|) $show_options = true;
+if("|FORCE_SKIN_OPTIONS|"=="1") $show_options = true;
+
+if("|USERNAME|"=="admin" && "|USERCREATOR|"!="root") $show_warn = true;
+
+$showit = ($path=="/usr/local/directadmin/data/skin_data/capri/");
+?>
+<style type="text/css">
+<!--
+.serverskin { font-size: 11px; }
+.serverskin input { vertical-align: -3px; }
+-->
+</style>
+
+<div class="table75">
+  |SKINS|
+  
+  <form name=uploadform action="CMD_SKINS" enctype="multipart/form-data" method="post">
+  <input type="hidden" name="MAX_FILE_SIZE" value="10485760">
+  <input type="hidden" name="action" value="upload">
+    <table class="config" cellspacing="0" style="margin: 12px 0;">
+      <thead>
+      <tr><td colspan=2>|LANG_UPLOAD_SKIN|</td></tr>
+      </thead>
+      <tbody>
+      <tr><td>|LANG_FILE|</td><td><input type="file" class="combot" name="file" size=40></td></tr>
+      <tr><td>|LANG_SKIN_NAME|</td><td><input type=text name="name" class="combot" size=30></td></tr>
+      </tbody>
+      <tfoot>
+      <tr><td colspan=2><span class="serverskin">|SERVERSKIN|</span><input type=submit class="boton" name=save value="|LANG_UPLOAD|" style="margin-left:20px;"></td></tr>
+      </tfoot>
+    </table>
+  </form>
+<?php
+if($show_options==true) {
+
+	$msg = openfile("{$path}results");
+
+	if($_SERVER["QUERY_STRING"])
+		parse_str($_SERVER["QUERY_STRING"]);
+	else
+		parse_str(getenv("QUERY_STRING"));
+
+	$troubles = '|LANG_TR_OK|';
+	$troubles1 = '';
+	if(!is_writeable($path)) $troubles1 .= '|LANG_TR_PATH_PERM|';
+	if(!(@gethostbyname('yanger.googlecode.com'))) $troubles1 .= '|LANG_TR_HOSTNAME|';
+	if( $showit && (ini_get("allow_url_fopen")==0 || ini_get("allow_url_fopen")=="off"))
+		$troubles1 .= '|LANG_TR_FOPEN|';
+
+	if($colorset && ($colorset==1 || $colorset==2) && $path) {
+		whitefile($colorset, "{$path}color");
+		$upgrade = 1;
+	}
+
+	if($imagelogo && $imagelogo!='' && urldecode($imagelogo!='http://')) {
+		if($img = @file_get_contents(urldecode($imagelogo))) {
+			whitefile(1, "{$path}changeimagelogo");
+			whitefile($img, "{$path}imagelogo");
+			$msg = "|LANG_LOGO_DONE|";
+		} else {
+			$error = "|LANG_FETCH_URL_ERROR|";
+		}
+	}
+
+	if($resellerslogo && $resellerslogo==1) {
+		if($allow==1) {
+			whitefile(1, "{$path}allowcustomlogo");
+			if(!file_exists("{$path}allowcustomlogo"))
+				$troubles1 .= '|LANG_TR_CREATE_FILE|';
+		} else {
+			@unlink("{$path}allowcustomlogo");
+		}
+	}
+
+	if($restorelogo==1) {
+		whitefile(1, "{$path}restoreimagelogo");
+		$msg = "|LANG_LOGO_RESTORED|";
+	}
+
+	if($upgrade && $upgrade==1 && $path) {
+		whitefile("1", "{$path}upgrade");
+		$doupgrade=true;
+		if(!file_exists("{$path}upgrade")) { 
+			$troubles1 .= '|LANG_TR_CREATE_FILE|'; 
+		} else {
+			if($msg && $msg!='')
+				$msg .= "\n|LANG_REQUEST_PENDING|";
+			else
+				$msg = "|LANG_REQUEST_PENDING|";
+		}
+	}
+
+	$versions = @file_get_contents("http://yanger.googlecode.com/files/capri.ver");
+	if(!$versions) $versions = 'n/a-n/a';
+	list($ava, $da) = explode('-', $versions);
+
+	if($msg && $msg!='') { 
+		echo '<div class="smsg">'.nl2br(htmlspecialchars($msg)).'</div>';
+		@unlink("{$path}results");  
+	}
+
+	$color = openfile("{$path}color");
+?>
+<table cellspacing="0" class="config"><thead>
+<tr><td colspan="2">|LANG_SKIN_MANAGER|</td></tr></thead><tbody>
+<tr><th width="20%">|LANG_LIS_KEY|</th><td><input type="text" class="combot" style="width:250px" value="|LIC|"></td></tr>
+<tr><th>|LANG_LIS_ST|</th><td>|LANG_LIC_ACT|</td></tr>
+<tr><td nowrap width="20%">|LANG_COLOR_S|</td>
+<td><select class="combot" id="colorset" name="colorset"<?php if(!$showit) echo ' disabled'; ?>>
+<option value="1" <?php if($color!=2) echo 'selected'; ?>>|LANG_COLOR_1|</option>
+<option value="2" <?php if($color==2) echo 'selected'; ?>>|LANG_COLOR_2|</option></select></td></tr>
+<tr><td nowrap width="20%">|LANG_LOGO_URL|</td>
+<td><form id="form1" name="form1" method="GET" action="/CMD_SKINS">
+<input type class="combot" id="imagelogo" name="imagelogo" value="http://" style="width: 160px;">
+<input name="Submit" type="submit" class="boton small" value="|LANG_SUBMIT|"<?php if(!$showit) echo ' disabled'; ?>> 
+<?php if(file_exists("/usr/local/directadmin/data/skin_data/capri/imagelogo")) { ?>
+<input name="restore" type="button" class="boton small" value="|LANG_RESTORE|" onClick="window.location='/CMD_SKINS?restorelogo=1'"><?php } ?>
+</form></td></tr><tr><td nowrap width="20%">|LANG_RES_CUSTOM|</td>
+<td><form id="form1" name="form1" method="GET" action="/CMD_SKINS" onsubmit="return customLogoForm(<?php if(file_exists("{$path}allowcustomlogo")) echo "1"; ?>)">
+<input type="hidden" name="resellerslogo" value="1"><input type="checkbox" id="resellerslogo" name="allow" value="1"<?php if(file_exists("{$path}allowcustomlogo")) echo " checked"; ?>>
+<input name="Submit" type="submit" class="boton small" value="|LANG_SAVE|"<?php if(!$showit) echo ' disabled'; ?>></form></td></tr>
+<tr><td nowrap width="20%">|LANG_INST_SKB|</td><td>|SVERSION|</td></tr>
+<tr><td nowrap>|LANG_LAST_SKB|</td><td><?php echo $ava; ?> <?php if($showit){ ?>
+<input onclick="window.location='/CMD_SKINS?upgrade=1'" type="button" class="boton small" value="|LANG_UPGRADE|" style="margin-left:40px;">
+<?php } ?></td></tr><tr><td nowrap>|LANG_LAST_DA|</td><td><?php echo $da;?></td></tr>
+<tr><td nowrap>|LANG_INST_DA|</td><td>|VERSION|</td></tr>
+<tr><th colspan=2 style="padding-top: 12px !important;">|LANG_TR_SH|</th></tr>
+<tr><td colspan="2"><?php echo ($troubles1!='')?$troubles1:$troubles;?></td></tr></tbody></table>
+<?php } elseif(file_exists("{$path}allowcustomlogo")) {
+	$msg = openfile("{$path}results_|USERNAME|");
+	if($_SERVER["QUERY_STRING"])
+		parse_str($_SERVER["QUERY_STRING"]);
+	else
+		parse_str(getenv("QUERY_STRING"));
+
+	if($resellerlogo && $resellerlogo!='' && $resellerlogo!='http://') {
+		if($img = @file_get_contents(urldecode($resellerlogo))) {
+			whitefile($img, "{$path}_newlogo");
+			if(file_exists("{$path}_newlogo")) {
+				if(function_exists('getimagesize')) {
+					list($w, $h, $t, $x, $m) = getimagesize("{$path}_newlogo");
+					if(($t==1 || $t==IMAGETYPE_JPEG || $t==2 || $t==IMAGETYPE_GIF) && $w<=300 && $h<=60) {
+						whitefile("|USERNAME|", "{$path}_logodata");
+						$msg = "|LANG_LOGO_DONE|";
+					} else {
+						$error = "|LANG_IMAGE_ERROR|";
+					}
+				} else {
+					$ext = strtolower(substr(urldecode($resellerlogo), -4, 4));
+					if($ext=='.gif' || $ext=='.jpeg' || $ext=='jpeg') {
+						whitefile("|USERNAME|", "{$path}_logodata");
+						$msg = "|LANG_LOGO_DONE|";
+					} else {
+						$error = "|LANG_IMAGE_ERROR|";
+					}
+				}
+			} else {
+				$error = "|LANG_IMG_UPLOAD_ERROR|";
+			}
+		} else {
+			$error = "|LANG_FETCH_URL_ERROR|";
+		}
+	}
+
+	if($msg && $msg!='') { 
+		echo '<div class="smsg">'.nl2br(htmlspecialchars($msg)).'</div>';
+		@unlink("{$path}results");  
+	}
+
+	if($error && $error!='') { 
+		echo '<div style="border:1px solid #e00;padding:3px 8px;font-size:11px;color:#a00;margin-bottom:10px;background-color:#ffeae6;">'.nl2br(htmlspecialchars($error)).'</div>';
+		@unlink($path."results");
+	}
+?>
+<table cellspacing="0" class="config"><thead><tr><td colspan="2">|LANG_SKIN_MANAGER|</td></tr>
+</thead><tbody><tr><td colspan="2" class="clear">|LANG_LOGO_HELP|</td></tr>
+<tr><td nowrap width="20%">|LANG_LOGO_URL|</td>
+<td><form id="form1" name="form1" method="GET" action="">
+<input type class="combot" id="resellerlogo" name="resellerlogo" value="http://" style="width: 160px;"<?php if(!$showit)echo' disabled';?>>
+<input name="Submit" type="submit" class="boton small" value="|LANG_SUBMIT|"<?php if(!$showit)echo' disabled';?>>
+<?php if(file_exists("/usr/local/directadmin/data/skin_data/capri/imagelogo")) { ?>
+<input name="restore" type="button" class="boton small" value="|LANG_RESTORE|" onClick="javascript:window.location='/CMD_SKINS?restorereslogo=1';" /> 
+<?php } ?></form></td></tr></tbody></table><?php } ?>
+DONE|
+</div>
+<script language="JavaScript" type="text/javascript">
+<!--
+$(function(){
+  $('span').ToolTip({className:'tooltip',position:'mouse',delay: 200});
+  $("#colorset").bind("change",function(){window.location='/CMD_SKINS?colorset='+$(this).val();});
+  $("#imagelogo, #resellerlogo").hover(function(){
+    $("#top_logo").addClass("highlight");
+  },function(){
+    $("#top_logo").removeClass("highlight");
+  });
+});
+function customLogoForm(e){
+  if(e==1 && $("#resellerslogo").attr("checked")==false) {
+    if(confirm("|LANG_DID_LOGO_WARN|")) {
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    return true;
+  }
+}
+//-->
+</script>
+|HTM_RESELLER_BOTTOM|

@@ -1,0 +1,168 @@
+|?TREE=&raquo; <a class=tree href="/CMD_SHOW_DOMAIN?domain=`domain`">`domain`</a>|
+|?HELP_SECTION=`USER_HELPER`|
+|HTM_CONFIG|
+|HTM_USER_TOP|
+|LF_POP|
+|$|SK_PHP|
+      <div style="float:left;width:350px;margin-right: 40px;">
+<?php
+
+include |SK_ROOT|."inc/functions.php";
+
+$daplugins=array();
+$plugin=array();
+$daplugins[0] = '|PLUGIN_0_TXT|';
+$daplugins[1] = '|PLUGIN_1_TXT|';
+$daplugins[2] = '|PLUGIN_2_TXT|';
+$daplugins[3] = '|PLUGIN_3_TXT|';
+$daplugins[4] = '|PLUGIN_4_TXT|';
+$daplugins[5] = '|PLUGIN_5_TXT|';
+$daplugins[6] = '|PLUGIN_6_TXT|';
+$daplugins[7] = '|PLUGIN_7_TXT|';
+
+$domain_array = array("awstats", "pgsql", "postgre", "phpvs", "hotlink", "php version selector");
+$account_array = array("bill", "payment", "easyinstall");
+foreach($daplugins as $data) {
+	if(strlen($data)>2) {
+		if(in_array(strtolower($data), $domain_array)) 
+			$plugin['domain'][] = $data;
+		elseif(stristr($data, "smtp"))
+			$plugin['email'][] = $data;
+		elseif(in_array(strtolower($data), $account_array))
+			$plugin['account'][] = $data;
+		else
+			$plugin['extra'][] = $data;
+	}
+}
+
+$domain = '|domain|';
+
+$items[] = array('img' => '/IMG_IC_STATS', 'link' => '/CMD_USER_STATS?domain='.$domain, 'txt' => '|LANG_SITE_SUM_STATS_LOGS|');
+$items[] = array('img' => '/IMG_IC_FILEMAN', 'link' => '/CMD_FILE_MANAGER?domain='.$domain, 'txt' => '|LANG_FILE_MANAGER|');
+|*if USERDATABASEMAX!="0"|
+$items[] = array('img' => '/IMG_IC_PHPMYADMIN', 'link' => 'http://|HOSTNAME|/phpMyAdmin', 'txt' => '|LANG_PHPMYADMIN|');
+|*endif|
+$items[] = array('img' => '/IMG_IC_PASSWD', 'link' => '/HTM_PASSWD?domain='.$domain, 'txt' => '|LANG_CHANGE_PASSWORD|');
+$items[] = array('img' => '/IMG_IC_LOGHIST', 'link' => '/CMD_LOGIN_HISTORY?domain='.$domain, 'txt' => '|LANG_LOGIN_HISTORY|');
+$items[] = array('img' => '/IMG_IC_SUPPORT', 'link' => '/CMD_TICKET?domain='.$domain, 'txt' => '|LANG_SUPPORT_CENTER|');
+|*if USERSYSINFO="ON"|
+$items[] = array('img' => '/IMG_IC_SERVINFO', 'link' => '/CMD_SYSTEM_INFO?domain='.$domain, 'txt' => '|LANG_SERVER_INFO|');
+|*endif|
+$items[] = array('img' => '/IMG_IC_BACKUP', 'link' => '/CMD_SITE_BACKUP?domain='.$domain, 'txt' => '|LANG_CREATE_RESTORE_BACKUPS|');
+$items[] = array('img' => '/IMG_IC_PASSDIRS', 'link' => '/CMD_PROTECTED_DIRECTORIES?domain='.$domain, 'txt' => '|LANG_PASS_PROC_DIRS|');
+|*if USERDNSCONTROL="ON"|
+$items[] = array('img' => '/IMG_IC_DNS', 'link' => '/CMD_DNS_CONTROL?domain='.$domain, 'txt' => '|LANG_DNS_MANAGEMENT|');
+|*endif|
+
+if(is_array($plugin['account']) && count($plugin['account'])>0) {
+	foreach($plugin['account'] as $plug) {
+		$items[] = array('plugin' => $plug);
+	}
+}
+
+$sk->iconmenu('|LANG_MENU_ACCOUNT|', $items);
+unset($items);
+
+|*if USERDATABASEMAX!="0"|
+$items[] = array('img' => '/IMG_IC_MYSQL', 'link' => '/CMD_DB?domain='.$domain, 'txt' => '|LANG_MYSQL_MANAGEMENT|');
+|*endif|
+|*if USERFTPMAX!="0"|
+$items[] = array('img' => '/IMG_IC_FTP', 'link' => '/CMD_FTP?domain='.$domain, 'txt' => '|LANG_FTP_MANAGEMENT|');
+|*endif|
+|*if NUSERSUBDOMAINSMAX!="0"|
+$items[] = array('img' => '/IMG_IC_SUBDOM', 'link' => '/CMD_SUBDOMAIN?domain='.$domain, 'txt' => '|LANG_SUBDOMAIN_MANAGEMENT|');
+|*endif|
+|*if USERPOINTERSMAX!="0"|
+$items[] = array('img' => '/IMG_IC_DOMPTR', 'link' => '/CMD_DOMAIN_POINTER?domain='.$domain, 'txt' => '|LANG_DOMAIN_POINTERS|');
+|*endif|
+$items[] = array('img' => '/IMG_IC_SITEREDIRECT', 'link' => '/CMD_REDIRECT?domain='.$domain, 'txt' => '|LANG_SITE_REDIRECTION|');
+|*if ALLOWED_CMD_DOMAIN!="no"|
+$items[] = array('img' => '/IMG_IC_DOMAIN_SETUP', 'link' => '/CMD_ADDITIONAL_DOMAINS?domain='.$domain, 'txt' => '|LANG_DOMAIN_SETUP|');
+|*endif|
+
+if(is_array($plugin['domain']) && count($plugin['domain'])>0) {
+	foreach($plugin['domain'] as $plug) {
+		$items[] = array('plugin' => $plug);
+	}
+}
+
+$sk->iconmenu('|LANG_TIT_DOMAIN|', $items);
+unset($items);
+
+?>
+      </div>
+      <div style="float:left;width:350px">
+<?php
+
+$items[] = array('img' => '/IMG_IC_EMAIL', 'link' => '/CMD_EMAIL_POP?domain='.$domain, 'txt' => '|LANG_POP_EMAIL_ACCOUNTS|');
+|*if USERCATCHALL="ON"|
+$items[] = array('img' => '/IMG_IC_EMAIL_CATCH', 'link' => '/CMD_EMAIL_CATCH_ALL?domain='.$domain, 'txt' => '|LANG_CATCH_ALL_EMAIL|');
+|*endif|
+|*if USERFORWARDERMAX!="0"|
+$items[] = array('img' => '/IMG_IC_EMAIL_FOR', 'link' => '/CMD_EMAIL_FORWARDER?domain='.$domain, 'txt' => '|LANG_FORWARDERS|');
+|*endif|
+|*if USERRESPONDERMAX!="0"|
+$items[] = array('img' => '/IMG_IC_EMAIL_AUTO', 'link' => '/CMD_EMAIL_AUTORESPONDER?domain='.$domain, 'txt' => '|LANG_AUTORESPONDERS|');
+|*endif|
+$items[] = array('img' => '/IMG_IC_EMAIL_VAC', 'link' => '/CMD_EMAIL_VACATION?domain='.$domain, 'txt' => '|LANG_VAC_MESSAGES|');
+|*if USERSPAM="ON"|
+$items[] = array('img' => '/IMG_IC_SPAM', 'link' => '/CMD_SPAMASSASSIN?domain='.$domain, 'txt' => '|LANG_SPAMASSASSIN|');
+|*endif|
+|*if USERMLISTMAX!="0"|
+$items[] = array('img' => '/IMG_IC_MAILING', 'link' => '/CMD_EMAIL_LIST?domain='.$domain, 'txt' => '|LANG_MAILING_LISTS|');
+|*endif|
+$items[] = array('img' => '/IMG_IC_EMAIL_FIL', 'link' => '/CMD_EMAIL_FILTER?domain='.$domain, 'txt' => '|LANG_SPAM_FILTERS|');
+
+if ("|HIDE_WEBMAIL_LINKS|" != "yes") {
+	if("|HAVE_ATMAIL|"=="yes") $items[] = array('img' => '/IMG_IC_ATMAIL', 'link' => '|HTTP|://|HOSTNAME|/atmail', 'txt' => '|LANG_WEBMAIL_ATM|');
+	if("|HAVE_WEBMAIL|"=="yes") $items[] = array('img' => '/IMG_IC_WEBMAIL', 'link' => '|HTTP|://|HOSTNAME|/webmail', 'txt' => '|LANG_WEBMAIL_UEBI|');
+	if("|HAVE_SQUIRRELMAIL|"=="yes") $items[] = array('img' => '/IMG_IC_WEBMAIL', 'link' => '|HTTP|://|HOSTNAME|/squirrelmail', 'txt' => '|LANG_WEBMAIL_SM|');
+	if("|HAVE_ROUNDCUBE|"=="yes") $items[] = array('img' => '/IMG_IC_ROUNDCUBE', 'link' => '|HTTP|://|HOSTNAME|/roundcube', 'txt' => '|LANG_WEBMAIL_ROUNDCUBE|');
+	if(@file_exists("/var/www/html/horde")) $items[] = array('img' => '/IMG_IC_HORDE', 'link' => '|HTTP|://|HOSTNAME|/horde', 'txt' => '|LANG_WEBMAIL_HORDE|');
+	if(@file_exists("/var/www/html/afterlogic")) $items[] = array('img' => '/IMG_IC_AFTERLOGIC', 'link' => '|HTTP|://|HOSTNAME|/afterlogic', 'txt' => 'Afterlogic');
+	$stat = array("horde", "webmail", "atmail", "squirrelmail", "afterlogic", "roundcube");
+	if(in_array("|WEBMAIL_LINK|", $stat) && @file_exists("/var/www/html/|WEBMAIL_LINK|"))
+		$items[] = array('img' => '/IMG_IC_WEBMAIL', 'link' => '|HTTP|://|HOSTNAME|/|WEBMAIL_LINK|', 'txt' => '|LANG_WEBMAIL|');
+}
+
+if(is_array($plugin['email']) && count($plugin['email'])>0) {
+	foreach($plugin['email'] as $plug) {
+		$items[] = array('plugin' => $plug);
+	}
+}
+
+|*if USEREMAILMAX!="0"|
+$sk->iconmenu('|LANG_MENU_EMAIL|',$items);
+|*endif|
+unset($items);
+
+|*if USERSSL="ON"|
+$items[] = array('img' => '/IMG_IC_SSL', 'link' => '/CMD_SSL?domain='.$domain, 'txt' => '|LANG_SSL_CERTS|');
+|*endif|
+|*if USERCRON="ON"|
+$items[] = array('img' => '/IMG_IC_CRON', 'link' => '/CMD_CRON_JOBS?domain='.$domain, 'txt' => '|LANG_CRONJOBS|');
+|*endif|
+$items[] = array('img' => '/IMG_IC_MIME', 'link' => '/CMD_MIME_TYPES?domain='.$domain, 'txt' => '|LANG_MIMETYPES|');
+$items[] = array('img' => '/IMG_IC_APACHEHAND', 'link' => '/CMD_HANDLERS?domain='.$domain, 'txt' => '|LANG_APACHE_HANDLERS|');
+$items[] = array('img' => '/IMG_IC_ERRORPAGES', 'link' => '/HTM_ERROR_PAGES?domain='.$domain, 'txt' => '|LANG_CUSTOM_ERROR_PAGES|');
+$items[] = array('img' => '/IMG_IC_PERLMODS', 'link' => '/CMD_PERL_MODULES?domain='.$domain, 'txt' => '|LANG_INSTALLED_PERL_MODULES|');
+|*if USERDNSCONTROL="ON"|
+$items[] = array('img' => '/IMG_IC_DNS', 'link' => '/CMD_DNS_MX?domain='.$domain, 'txt' => '|LANG_MX_RECORDS|');
+|*endif|
+|*if FRONTPAGE_ON="yes"|
+$items[] = array('img' => '/IMG_IC_FRONTP', 'link' => '/CMD_FRONTPAGE?domain='.$domain, 'txt' => '|LANG_FRONTPAGE_EXTENSIONS|');
+|*endif|
+
+if(is_array($plugin['extra']) && count($plugin['extra'])>0) {
+	foreach($plugin['extra'] as $plug) {
+		$items[] = array('plugin' => $plug);
+	}
+}
+
+$sk->iconmenu('|LANG_MENU_ADVANCED|', $items);
+unset($items);
+
+?>
+      </div>
+DONE|
+|HTM_USER_BOTTOM|
